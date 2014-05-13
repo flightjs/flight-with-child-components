@@ -1,0 +1,21 @@
+{
+  "name": "flight-with-teardown",
+  "version": "0.0.0",
+  "main": "lib/flight-with-teardown.js",
+  "dependencies": {
+    "flight": "~1.1.0"
+  },
+  "devDependencies": {
+    "jasmine-flight": "~2.2.0"
+  },
+  "ignore": [
+    ".gitignore",
+    ".gitattributes",
+    ".travis.yml",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "test",
+    "package.json",
+    "karma.conf.js"
+  ]
+}
