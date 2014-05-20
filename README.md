@@ -62,18 +62,11 @@ return defineComponent(childComponent, withTeardown);
 
 ## Development
 
-Development of this component requires [Bower](http://bower.io) to be globally
-installed:
-
-```bash
-npm install -g bower
-```
-
-Then install the Node.js and client-side dependencies by running the following
+Install the Node.js and client-side dependencies by running the following
 commands in the repo's root directory.
 
 ```bash
-npm install & bower install
+npm install
 ```
 
 To continuously run the tests in Chrome during development, just run:
