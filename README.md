@@ -22,13 +22,12 @@ bower install --save flight-with-teardown
 
 ## Example
 
-In the parent component:
+In the parent component, mixin `withTeardown` into the parent and its child dependencies.
 
 ```js
-
 var withTeardown = require('path/to/with/teardown');
-var ChildComponent = require('some/child');
-var AnotherChildComponent = require('another/child');
+var ChildComponent = require('some/child').mixin(withTeardown);
+var AnotherChildComponent = require('another/child').mixin(withTeardown);
 
 return defineComponent(parentComponent, withTeardown);
 
@@ -51,13 +50,6 @@ return defineComponent(parentComponent, withTeardown);
 
 // ...
 
-```
-
-In the child component:
-
-```js
-var withTeardown = require('path/to/with/teardown');
-return defineComponent(childComponent, withTeardown);
 ```
 
 ## Development
