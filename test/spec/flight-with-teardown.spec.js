@@ -13,8 +13,8 @@ define(function (require) {
 
         var ChildComponent = (function () {
             function childComponent() {}
-            return defineComponent(childComponent, withTeardown);
-        })();
+            return defineComponent(childComponent);
+        })().mixin(withTeardown);
 
         // Initialize the component and attach it to the DOM
         beforeEach(function () {
