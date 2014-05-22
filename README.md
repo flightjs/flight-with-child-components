@@ -1,7 +1,5 @@
 # flight-with-teardown
 
-[![Build Status](https://secure.travis-ci.org/<username>/flight-with-teardown.png)](http://travis-ci.org/<username>/flight-with-teardown)
-
 A [Flight](https://github.com/flightjs/flight) mixin for nesting components by coupling their life-cycles, making sure that a component and its children are torn down together.
 
 A component that intends to initialize child components should mix in `withTeardown` and
