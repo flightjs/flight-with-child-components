@@ -2,9 +2,9 @@ define(function (require) {
     'use strict';
 
     var defineComponent = require('flight/lib/component');
-    var withTeardown = require('lib/flight-with-teardown');
+    var withChildComponents = require('lib/flight-with-child-components');
 
-    describeMixin('lib/flight-with-teardown', function () {
+    describeMixin('lib/flight-with-child-components', function () {
 
         var Component;
         var ChildComponent;
@@ -23,8 +23,8 @@ define(function (require) {
             window.otherInnerDiv.id = 'otherInnerDiv';
             document.body.appendChild(window.outerDiv);
 
-            Component = defineComponent(function parentComponent() {}).mixin(withTeardown);
-            ChildComponent = defineComponent(function childComponent() {}).mixin(withTeardown);
+            Component = defineComponent(function parentComponent() {}).mixin(withChildComponents);
+            ChildComponent = defineComponent(function childComponent() {}).mixin(withChildComponents);
             ComponentWithoutMixin = defineComponent(function componentWithoutMixin() {});
             FakeComponent = {
                 mixin: function () {
@@ -95,11 +95,11 @@ define(function (require) {
                         teardownOn: this.component.childTeardownEvent
                     });
                 });
-                it('should mix withTeardown into child', function () {
+                it('should mix withChildComponents into child', function () {
                     setupComponent();
                     var spy = spyOn(ComponentWithoutMixin, 'mixin').andCallThrough();
                     this.component.attachChild(ComponentWithoutMixin, '.my-selector', {});
-                    expect(spy).toHaveBeenCalledWith(withTeardown);
+                    expect(spy).toHaveBeenCalledWith(withChildComponents);
                 });
                 it('should not overwrite a passed teardownOn event', function () {
                     setupComponent();
@@ -116,7 +116,7 @@ define(function (require) {
         describe('as a child', function () {
 
             it('should throw when intialized with its own childTeardownEvent', function () {
-                spyOn(withTeardown, 'nextTeardownEvent').andReturn('someFakeEvent');
+                spyOn(withChildComponents, 'nextTeardownEvent').andReturn('someFakeEvent');
                 var child = new ChildComponent();
                 expect(function () {
                     child.initialize(document, {

@@ -1,5 +1,5 @@
 {
-  "name": "flight-with-teardown",
+  "name": "flight-with-child-components",
   "version": "0.0.0",
   "devDependencies": {
     "bower": "^1.3.3",

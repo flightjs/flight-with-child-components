@@ -1,4 +1,4 @@
-# Contributing to flight-with-teardown
+# Contributing to flight-with-child-components
 
 Please take a moment to review this document in order to make the contribution
 process easy and effective for everyone involved.

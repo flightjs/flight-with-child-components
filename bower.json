@@ -1,7 +1,7 @@
 {
-  "name": "flight-with-teardown",
+  "name": "flight-with-child-components",
   "version": "0.0.0",
-  "main": "lib/flight-with-teardown.js",
+  "main": "lib/flight-with-child-components.js",
   "dependencies": {
     "flight": "~1.1.4"
   },

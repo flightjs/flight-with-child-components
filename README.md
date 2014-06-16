@@ -1,60 +1,42 @@
-# flight-with-teardown
+# flight-with-child-components
 
-A [Flight](https://github.com/flightjs/flight) mixin for nesting components by
-coupling their life-cycles, making sure that a component and its children are
-torn down together.
+A [Flight](https://github.com/flightjs/flight) mixin for nesting components by coupling their life-cycles, making sure that a component and its children are torn down together.
 
-A component that intends to initialize child components should mix in
-`withTeardown` and attach the children with a `teardownOn` attribute. This can
-be any event, but the `withTeardown` mixin adds a unique event name to the
-parent (`this.childTeardownEvent`) for this use.
+A component that intends to initialize child components should mix in `withChildComponents` and attach the children using `this.attachChild`.
 
-The child needs only to mix in `withTeardown` – this sets up listeners for the
-`teardownOn` event, if it's passed, and tears-down the child when this event is
-fired.
+The child will be passed an even to listen out for – when it's triggered, the child will teardown. `withChildComponents` mixin adds a unique event name to the parent (`this.childTeardownEvent`) for this use, but you can manually specify a `teardownOn` event name in the child's attrs.
 
-This construct supports trees of components because a child's
-`childTeardownEvent` will be fired before the child is torn down, and that will
-teardown any of the child's children in a cascade.
+This construct supports trees of components because a child's `childTeardownEvent` will be fired before the child is torn down, and that will teardown any of the child's children in a cascade.
 
 ## Installation
 
 ```bash
-bower install --save flight-with-teardown
+bower install --save flight-with-child-components
 ```
 
 ## Example
 
-In the parent component, mixin `withTeardown` into the parent and its child
+In the parent component, mixin `withChildComponents` into the parent and its child
 dependencies.
 
 ```js
-var withTeardown = require('path/to/with/teardown');
-var ChildComponent = require('some/child').mixin(withTeardown);
-var AnotherChildComponent = require('another/child').mixin(withTeardown);
+var withChildComponents = require('path/to/the/mixin');
+var ChildComponent = require('some/child');
+var AnotherChildComponent = require('some/other/child');
 
-return defineComponent(parentComponent, withTeardown);
+return defineComponent(parentComponent, withChildComponents);
 
 function parentComponent() {
 
-  // ...
-
   this.after('initialize', function () {
+    // this.attachChild does all the work needed to support nesting
+    this.attachChild(ChildComponent, this.select('someChild'));
 
-    ChildComponent.attachTo(this.select('aChild'), {
-      teardownOn: this.childTeardownEvent
+    this.attachChild(AnotherChildComponent, this.select('anotherChild'), {
+      teardownOn: 'someEvent'
     });
-
-    AnotherChildComponent.attachTo(this.select('anotherChild'), {
-      teardownOn: this.childTeardownEvent
-    });
-
-    // To avoid having to supply this.childTeardownEvent, use attachChild
-    this.attachChild(YetAnotherChildComponent, this.select('yetAnotherChild'));
-
   });
 
-  // ...
 }
 ```
 
