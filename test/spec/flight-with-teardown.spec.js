@@ -6,15 +6,10 @@ define(function (require) {
 
     describeMixin('lib/flight-with-teardown', function () {
 
-        var Component = (function () {
-            function parentComponent() {}
-            return defineComponent(parentComponent, withTeardown);
-        })();
-
-        var ChildComponent = (function () {
-            function childComponent() {}
-            return defineComponent(childComponent);
-        })().mixin(withTeardown);
+        var Component;
+        var ChildComponent;
+        var ComponentWithoutMixin;
+        var FakeComponent;
 
         // Initialize the component and attach it to the DOM
         beforeEach(function () {
@@ -27,6 +22,16 @@ define(function (require) {
             window.innerDiv.id = 'innerDiv';
             window.otherInnerDiv.id = 'otherInnerDiv';
             document.body.appendChild(window.outerDiv);
+
+            Component = defineComponent(function parentComponent() {}).mixin(withTeardown);
+            ChildComponent = defineComponent(function childComponent() {}).mixin(withTeardown);
+            ComponentWithoutMixin = defineComponent(function componentWithoutMixin() {});
+            FakeComponent = {
+                mixin: function () {
+                    return FakeComponent;
+                },
+                attachTo: jasmine.createSpy()
+            };
         });
 
         afterEach(function () {
@@ -36,6 +41,7 @@ define(function (require) {
             window.otherInnerDiv = null;
             Component.teardownAll();
             ChildComponent.teardownAll();
+            ComponentWithoutMixin.teardownAll();
         });
 
         describe('as a parent', function () {
@@ -83,22 +89,22 @@ define(function (require) {
             describe('attachChild', function () {
                 it('should attach child with teardownOn', function () {
                     setupComponent();
-                    var Component = {
-                        attachTo: jasmine.createSpy()
-                    };
-                    this.component.attachChild(Component, '.my-selector', { test: true });
-                    expect(Component.attachTo).toHaveBeenCalledWith('.my-selector', {
+                    this.component.attachChild(FakeComponent, '.my-selector', { test: true });
+                    expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
                         test: true,
                         teardownOn: this.component.childTeardownEvent
                     });
                 });
+                it('should mix withTeardown into child', function () {
+                    setupComponent();
+                    var spy = spyOn(ComponentWithoutMixin, 'mixin').andCallThrough();
+                    this.component.attachChild(ComponentWithoutMixin, '.my-selector', {});
+                    expect(spy).toHaveBeenCalledWith(withTeardown);
+                });
                 it('should not overwrite a passed teardownOn event', function () {
                     setupComponent();
-                    var Component = {
-                        attachTo: jasmine.createSpy()
-                    };
-                    this.component.attachChild(Component, '.my-selector', { test: true, teardownOn: 'someTeardownEvent' });
-                    expect(Component.attachTo).toHaveBeenCalledWith('.my-selector', {
+                    this.component.attachChild(FakeComponent, '.my-selector', { test: true, teardownOn: 'someTeardownEvent' });
+                    expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
                         test: true,
                         teardownOn: 'someTeardownEvent'
                     });
