@@ -23,15 +23,27 @@ define(function (require) {
             window.otherInnerDiv.id = 'otherInnerDiv';
             document.body.appendChild(window.outerDiv);
 
+            window.childDidTeardown = false;
+            window.otherChildDidTeardown = false;
+
             Component = defineComponent(function parentComponent() {}).mixin(withChildComponents);
-            ChildComponent = defineComponent(function childComponent() {}).mixin(withChildComponents);
+            ChildComponent = defineComponent(function childComponent() {
+                this.attributes({
+                    teardownAttr: ''
+                });
+                this.before('teardown', function () {
+                    window[this.attr.teardownAttr] = true;
+                });
+            });
             ComponentWithoutMixin = defineComponent(function componentWithoutMixin() {});
-            FakeComponent = {
-                mixin: function () {
-                    return FakeComponent;
-                },
-                attachTo: jasmine.createSpy()
+            FakeComponent = function () {}
+            FakeComponent.prototype = {
+                mixedIn: [],
             };
+            FakeComponent.mixin = function () {
+                return FakeComponent;
+            };
+            FakeComponent.attachTo = jasmine.createSpy();
         });
 
         afterEach(function () {
@@ -44,97 +56,72 @@ define(function (require) {
             ComponentWithoutMixin.teardownAll();
         });
 
-        describe('as a parent', function () {
-
-            it('should get a childTeardownEvent', function () {
-                var component = new Component();
-                component.initialize(window.outerDiv);
-                expect(component.childTeardownEvent).toBeDefined();
-            });
-
-            it('should teardown the child when torn down', function () {
-                var parent = new Component();
-                parent.initialize(window.outerDiv);
-                var child = new ChildComponent();
-                child.initialize(window.innerDiv, {
-                    teardownOn: parent.childTeardownEvent
-                });
-                var parentEventSpy = spyOnEvent(document, parent.childTeardownEvent);
-                var childEventSpy = spyOnEvent(document, child.childTeardownEvent);
-                parent.teardown();
-                expect(parentEventSpy).toHaveBeenTriggeredOn(document);
-                expect(childEventSpy).toHaveBeenTriggeredOn(document);
-            });
-
-            it('should teardown all children when torn down', function () {
-                var parent = new Component();
-                parent.initialize(window.outerDiv);
-                var child = new ChildComponent();
-                child.initialize(window.innerDiv, {
-                    teardownOn: parent.childTeardownEvent
-                });
-                var otherChild = new ChildComponent();
-                otherChild.initialize(document, {
-                    teardownOn: parent.childTeardownEvent
-                });
-                var parentEventSpy = spyOnEvent(document, parent.childTeardownEvent);
-                var childEventSpy = spyOnEvent(document, child.childTeardownEvent);
-                var otherChildEventSpy = spyOnEvent(document, otherChild.childTeardownEvent);
-                parent.teardown();
-                expect(parentEventSpy).toHaveBeenTriggeredOn(document);
-                expect(childEventSpy).toHaveBeenTriggeredOn(document);
-                expect(otherChildEventSpy).toHaveBeenTriggeredOn(document);
-            });
-
-            describe('attachChild', function () {
-                it('should attach child with teardownOn', function () {
-                    setupComponent();
-                    this.component.attachChild(FakeComponent, '.my-selector', { test: true });
-                    expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
-                        test: true,
-                        teardownOn: this.component.childTeardownEvent
-                    });
-                });
-                it('should mix withChildComponents into child', function () {
-                    setupComponent();
-                    var spy = spyOn(ComponentWithoutMixin, 'mixin').andCallThrough();
-                    this.component.attachChild(ComponentWithoutMixin, '.my-selector', {});
-                    expect(spy).toHaveBeenCalledWith(withChildComponents);
-                });
-                it('should not overwrite a passed teardownOn event', function () {
-                    setupComponent();
-                    this.component.attachChild(FakeComponent, '.my-selector', { test: true, teardownOn: 'someTeardownEvent' });
-                    expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
-                        test: true,
-                        teardownOn: 'someTeardownEvent'
-                    });
-                });
-            });
-
+        it('should get a childTeardownEvent', function () {
+            var component = new Component();
+            component.initialize(window.outerDiv);
+            expect(component.childTeardownEvent).toBeDefined();
         });
 
-        describe('as a child', function () {
-
-            it('should throw when intialized with its own childTeardownEvent', function () {
-                spyOn(withChildComponents, 'nextTeardownEvent').andReturn('someFakeEvent');
-                var child = new ChildComponent();
-                expect(function () {
-                    child.initialize(document, {
-                        teardownOn: 'someFakeEvent'
-                    });
-                }).toThrow();
+        it('should teardown the child when torn down', function () {
+            var parent = new Component();
+            parent.initialize(window.outerDiv);
+            parent.attachChild(ChildComponent, window.innerDiv, {
+                teardownAttr: 'childDidTeardown'
             });
+            var parentEventSpy = spyOnEvent(document, parent.childTeardownEvent);
+            parent.teardown();
+            expect(parentEventSpy).toHaveBeenTriggeredOn(document);
+            expect(window.childDidTeardown).toBe(true);
+        });
 
-            it('should trigger children to teardown when torndown via event', function () {
-                var child = new ChildComponent();
-                child.initialize(window.innerDiv, {
-                    teardownOn: 'aFakeEvent'
+        it('should teardown all children when torn down', function () {
+            var parent = new Component();
+            parent.initialize(window.outerDiv);
+            parent.attachChild(ChildComponent, window.innerDiv, {
+                teardownAttr: 'childDidTeardown'
+            });
+            parent.attachChild(ChildComponent, document, {
+                teardownAttr: 'otherChildDidTeardown'
+            });
+            var parentEventSpy = spyOnEvent(document, parent.childTeardownEvent);
+            parent.teardown();
+            expect(parentEventSpy).toHaveBeenTriggeredOn(document);
+            expect(window.childDidTeardown).toBe(true);
+            expect(window.otherChildDidTeardown).toBe(true);
+        });
+
+        describe('attachChild', function () {
+            it('should attach child with teardownOn', function () {
+                setupComponent();
+                this.component.attachChild(FakeComponent, '.my-selector', { test: true });
+                expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
+                    test: true,
+                    teardownOn: this.component.childTeardownEvent
                 });
-                var childEventSpy = spyOnEvent(document, child.childTeardownEvent);
-                $(document).trigger('aFakeEvent');
-                expect(childEventSpy).toHaveBeenTriggeredOn(document);
             });
-
+            it('should mix withBoundLifecycle into child', function () {
+                setupComponent();
+                var spy = spyOn(ComponentWithoutMixin, 'mixin').andCallThrough();
+                this.component.attachChild(ComponentWithoutMixin, '.my-selector', {});
+                expect(spy).toHaveBeenCalledWith(withChildComponents.withBoundLifecycle);
+            });
+            it('should not mix withBoundLifecycle twice', function () {
+                setupComponent();
+                var ComponentWithBoundLifecyleMixin = ComponentWithoutMixin.mixin(
+                    withChildComponents.withBoundLifecycle
+                );
+                var spy = spyOn(ComponentWithBoundLifecyleMixin, 'mixin').andCallThrough();
+                this.component.attachChild(ComponentWithBoundLifecyleMixin, '.my-selector', {});
+                expect(spy).not.toHaveBeenCalledWith(withChildComponents.withBoundLifecycle);
+            });
+            it('should not overwrite a passed teardownOn event', function () {
+                setupComponent();
+                this.component.attachChild(FakeComponent, '.my-selector', { test: true, teardownOn: 'someTeardownEvent' });
+                expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
+                    test: true,
+                    teardownOn: 'someTeardownEvent'
+                });
+            });
         });
 
     });
