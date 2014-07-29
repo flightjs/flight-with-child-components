@@ -6,7 +6,7 @@ A component that intends to initialize child components should mix in `withChild
 
 The child will be passed an even to listen out for – when it's triggered, the child will teardown. `withChildComponents` mixin adds a unique event name to the parent (`this.childTeardownEvent`) for this use, but you can manually specify a `teardownOn` event name in the child's attrs.
 
-This construct supports trees of components because a child's `childTeardownEvent` will be fired before the child is torn down, and that will teardown any of the child's children in a cascade.
+This construct supports trees of components because, if the child also mixes in `withChildComponents`, it's `childTeardownEvent` will be fired before it is torn down, and that will teardown any further children in a cascade.
 
 ## Installation
 
@@ -16,8 +16,7 @@ bower install --save flight-with-child-components
 
 ## Example
 
-In the parent component, mixin `withChildComponents` into the parent and its child
-dependencies.
+In the parent component, mixin `withChildComponents` into the parent.
 
 ```js
 var withChildComponents = require('path/to/the/mixin');
@@ -32,7 +31,8 @@ function parentComponent() {
     // this.attachChild does all the work needed to support nesting
     this.attachChild(ChildComponent, this.select('someChild'));
 
-    this.attachChild(AnotherChildComponent, this.select('anotherChild'), {
+    // it supports the same API as 'attachTo'
+    this.attachChild(AnotherChildComponent, '.another-child', {
       teardownOn: 'someEvent'
     });
   });
