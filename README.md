@@ -1,5 +1,7 @@
 # flight-with-child-components
 
+[![Build Status](https://travis-ci.org/flightjs/flight-with-child-components.png?branch=master)](http://travis-ci.org/flightjs/flight-with-child-components)
+
 A [Flight](https://github.com/flightjs/flight) mixin for nesting components by coupling their life-cycles, making sure that a component and its children are torn down together.
 
 A component that intends to initialize child components should mix in `withChildComponents` and attach the children using `this.attachChild`.
