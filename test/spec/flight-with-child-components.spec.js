@@ -92,7 +92,7 @@ define(function (require) {
 
         describe('attachChild', function () {
             it('should attach child with teardownOn', function () {
-                setupComponent();
+                this.setupComponent();
                 this.component.attachChild(FakeComponent, '.my-selector', { test: true });
                 expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
                     test: true,
@@ -100,22 +100,22 @@ define(function (require) {
                 });
             });
             it('should mix withBoundLifecycle into child', function () {
-                setupComponent();
-                var spy = spyOn(ComponentWithoutMixin, 'mixin').andCallThrough();
+                this.setupComponent();
+                var spy = spyOn(ComponentWithoutMixin, 'mixin').and.callThrough();
                 this.component.attachChild(ComponentWithoutMixin, '.my-selector', {});
                 expect(spy).toHaveBeenCalledWith(withChildComponents.withBoundLifecycle);
             });
             it('should not mix withBoundLifecycle twice', function () {
-                setupComponent();
+                this.setupComponent();
                 var ComponentWithBoundLifecyleMixin = ComponentWithoutMixin.mixin(
                     withChildComponents.withBoundLifecycle
                 );
-                var spy = spyOn(ComponentWithBoundLifecyleMixin, 'mixin').andCallThrough();
+                var spy = spyOn(ComponentWithBoundLifecyleMixin, 'mixin').and.callThrough();
                 this.component.attachChild(ComponentWithBoundLifecyleMixin, '.my-selector', {});
                 expect(spy).not.toHaveBeenCalledWith(withChildComponents.withBoundLifecycle);
             });
             it('should not overwrite a passed teardownOn event', function () {
-                setupComponent();
+                this.setupComponent();
                 this.component.attachChild(FakeComponent, '.my-selector', { test: true, teardownOn: 'someTeardownEvent' });
                 expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
                     test: true,

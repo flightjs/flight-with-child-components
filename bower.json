@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "jasmine-flight": "~2.2.0"
+    "jasmine-flight": "~3.0.0"
   },
   "ignore": [
     ".*",
