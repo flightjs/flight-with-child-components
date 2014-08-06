@@ -28,7 +28,7 @@ define(function (require) {
 
             Component = defineComponent(function parentComponent() {}).mixin(withChildComponents);
             ChildComponent = defineComponent(function childComponent() {
-                this.attributes({
+                this.defaultAttrs({
                     teardownAttr: ''
                 });
                 this.before('teardown', function () {
