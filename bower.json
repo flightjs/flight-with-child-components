@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "main": "lib/flight-with-child-components.js",
   "dependencies": {
-    "flight": "~1.1.4"
+    "flight": ">=1.1.4"
   },
   "license": "MIT",
   "devDependencies": {
