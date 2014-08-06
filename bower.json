@@ -3,20 +3,19 @@
   "version": "0.2.0",
   "main": "lib/flight-with-child-components.js",
   "dependencies": {
-    "flight": "v1.2.0"
+    "flight": "~1.2.0"
   },
   "license": "MIT",
   "devDependencies": {
     "jasmine-flight": "~2.2.0"
   },
   "ignore": [
-    ".gitignore",
-    ".gitattributes",
-    ".travis.yml",
+    ".*",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
     "test",
     "package.json",
-    "karma.conf.js"
+    "karma.conf.js",
+    "Gruntfile.js"
   ]
 }

@@ -11,21 +11,16 @@ module.exports = function (config) {
     basePath: '',
 
     frameworks: [
-      'jasmine'
+      'jasmine',
+      'requirejs'
     ],
 
     // list of files / patterns to load in the browser
     files: [
       // loaded without require
-      'bower_components/es5-shim/es5-shim.js',
-      'bower_components/es5-shim/es5-sham.js',
       'bower_components/jquery/dist/jquery.min.js',
       'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
       'bower_components/jasmine-flight/lib/jasmine-flight.js',
-
-      // hack to load RequireJS after the shim libs
-      'node_modules/requirejs/require.js',
-      'node_modules/karma-requirejs/lib/adapter.js',
 
       // loaded with require
       {pattern: 'bower_components/flight/**/*.js', included: false},
@@ -35,44 +30,28 @@ module.exports = function (config) {
       'test/test-main.js'
     ],
 
-    // use dots reporter, as travis terminal does not support escaping sequences
-    // possible values: 'dots', 'progress'
-    // CLI --reporters progress
-    reporters: ['progress'],
-
     // enable / disable watching file and executing tests whenever any file changes
     // CLI --auto-watch --no-auto-watch
     autoWatch: true,
 
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
+    // Start these browsers
     // CLI --browsers Chrome, Firefox, Safari
-    browsers: [
-      'Chrome'
-    ],
+    browsers: [process.env.TRAVIS ? 'Firefox' : 'Chrome'],
 
     // If browser does not capture in given timeout [ms], kill it
     // CLI --capture-timeout 5000
     captureTimeout: 20000,
 
+    // list of files to exclude
+    exclude: [],
+
+    // use dots reporter, as travis terminal does not support escaping sequences
+    // possible values: 'dots', 'progress'
+    // CLI --reporters progress
+    reporters: [process.env.TRAVIS ? 'dots' : 'progress'],
+
     // Auto run tests on start (when browsers are captured) and exit
     // CLI --single-run --no-single-run
-    singleRun: false,
-
-    plugins: [
-      'karma-jasmine',
-      'karma-requirejs',
-      'karma-chrome-launcher',
-      'karma-firefox-launcher',
-      'karma-ie-launcher',
-      'karma-phantomjs-launcher',
-      'karma-safari-launcher'
-    ]
+    singleRun: false
   });
 };
