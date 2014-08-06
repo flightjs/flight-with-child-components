@@ -1,5 +1,6 @@
 === HEAD
 
+=== 0.2.2 (August 6, 2014)
 === 0.2.1 (August 6, 2014)
 
 * Improve Flight dependency version range.
