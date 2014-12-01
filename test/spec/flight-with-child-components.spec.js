@@ -36,9 +36,9 @@ define(function (require) {
                 });
             });
             ComponentWithoutMixin = defineComponent(function componentWithoutMixin() {});
-            FakeComponent = function () {}
+            FakeComponent = function () {};
             FakeComponent.prototype = {
-                mixedIn: [],
+                mixedIn: []
             };
             FakeComponent.mixin = function () {
                 return FakeComponent;
@@ -66,6 +66,27 @@ define(function (require) {
             var parent = new Component();
             parent.initialize(window.outerDiv);
             parent.attachChild(ChildComponent, window.innerDiv, {
+                teardownAttr: 'childDidTeardown'
+            });
+            var parentEventSpy = spyOnEvent(document, parent.childTeardownEvent);
+            parent.teardown();
+            expect(parentEventSpy).toHaveBeenTriggeredOn(document);
+            expect(window.childDidTeardown).toBe(true);
+        });
+
+        it('should teardown the child when torn down if component uses new attributes', function () {
+            var parent = new Component();
+            parent.initialize(window.outerDiv);
+            var ChildComponentWithNewAttributes = defineComponent(function childComponentWithNewAttributes() {
+                // New method of attribute definition
+                this.attributes({
+                    teardownAttr: ''
+                });
+                this.before('teardown', function () {
+                    window[this.attr.teardownAttr] = true;
+                });
+            });
+            parent.attachChild(ChildComponentWithNewAttributes, window.innerDiv, {
                 teardownAttr: 'childDidTeardown'
             });
             var parentEventSpy = spyOnEvent(document, parent.childTeardownEvent);
