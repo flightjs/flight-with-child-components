@@ -1,6 +1,6 @@
 {
   "name": "flight-with-child-components",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "lib/flight-with-child-components.js",
   "dependencies": {
     "flight": ">=1.1.4"
