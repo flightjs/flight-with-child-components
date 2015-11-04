@@ -8,6 +8,8 @@ the developers managing and developing this open source project. In return,
 they should reciprocate that respect in addressing your issue or assessing
 patches and features.
 
+By contributing to this repository, including using the issue tracker, you agree to adhere to Twitter's [Open Source Code of Conduct][coc].
+
 
 ## Using the issue tracker
 

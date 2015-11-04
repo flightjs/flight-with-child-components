@@ -13,7 +13,7 @@ This construct supports trees of components because, if the child also mixes in 
 ## Installation
 
 ```bash
-bower install --save flight-with-child-components
+npm install --save flight-with-child-components
 ```
 
 ## Example
@@ -44,17 +44,13 @@ function parentComponent() {
 
 ## Development
 
-Install the Node.js and client-side dependencies by running the following
-commands in the repo's root directory.
+To develop this module, clone the repository and run:
 
-```bash
-npm install
+```
+$ npm install && npm test
 ```
 
-To continuously run the tests in Chrome during development, just run:
-
-```bash
-npm run watch-test
+If the tests pass, you have a working environment. You shouldn't need any external dependencies.
 ```
 
 ## Contributing to this project
