@@ -1,7 +1,7 @@
 {
   "name": "flight-with-child-components",
   "description": "A Flight mixin for nesting Flight components.",
-  "main": "dist/flght-with-child-components.js",
+  "main": "dist/flight-with-child-components.js",
   "files": [
     "dist"
   ],
