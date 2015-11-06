@@ -2,6 +2,9 @@
   "name": "flight-with-child-components",
   "description": "A Flight mixin for nesting Flight components.",
   "main": "dist/flght-with-child-components.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rm -rf ./dist && NODE_ENV=publish webpack --config config/webpack.config.publish.js --sort-assets-by --progress",
     "lint": "eslint config src",
