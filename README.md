@@ -51,7 +51,6 @@ $ npm install && npm test
 ```
 
 If the tests pass, you have a working environment. You shouldn't need any external dependencies.
-```
 
 ## Contributing to this project
 
