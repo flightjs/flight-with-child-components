@@ -6,7 +6,7 @@
 
 var teardownEventCount = 0;
 
-export function withBoundLifecycle() {
+function withBoundLifecycle() {
     // Use deprecated defaultAttrs() only if necessary
     var defineDefaultAttributes = (this.attrDef ? this.attributes : this.defaultAttrs);
     defineDefaultAttributes.call(this, {
@@ -28,7 +28,7 @@ export function withBoundLifecycle() {
     });
 }
 
-export default function withChildComponents() {
+function withChildComponents() {
     /**
      * Give every component that uses this mixin a new, unique childTeardownEvent
      */
@@ -73,3 +73,5 @@ withChildComponents.nextTeardownEvent = function () {
 };
 
 withChildComponents.withBoundLifecycle = withBoundLifecycle;
+
+module.exports = withChildComponents;
