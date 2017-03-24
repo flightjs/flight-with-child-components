@@ -104,6 +104,16 @@ You can then manually tear the component down using a jQuery event.
 $(document).trigger(teardownEvent);
 ```
 
+Like with `attachChild`, you can supply a custom `teardownOn` event name:
+
+```js
+const { teardownEvent } = attach(Component, '.some-node', {
+  teardownOn: 'someTeardownEvent'
+});
+```
+
+In this example, `teardownEvent` will be `someTeardownEvent`.
+
 ## Development
 
 To develop this module, clone the repository and run:
