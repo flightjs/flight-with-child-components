@@ -16,12 +16,28 @@ This construct supports trees of components because, if the child also mixes in 
 npm install --save flight-with-child-components
 ```
 
-## Example
+## Use
 
 In the parent component, mixin `withChildComponents` into the parent.
 
 ```js
-var withChildComponents = require('path/to/the/mixin');
+defineComponent(Component, withChildComponents);
+```
+
+This will add a generated `this.childTeardownEvent` property to the component — like `_teardownEvent7` — which will then be used to coordinate teardown with any "child" components.
+
+You don't need to use the `childTeardownEvent` manually: instead, use the `this.attachChild` method:
+
+```js
+this.attachChild(ChildComponent, this.select('someChild'));
+```
+
+This will do some magic to make sure that the `ChildComponent` instance does teardown with (actually, just before) the parent.
+
+Here's a full example:
+
+```js
+var withChildComponents = require('fight-with-child-components');
 var ChildComponent = require('some/child');
 var AnotherChildComponent = require('some/other/child');
 
@@ -35,11 +51,57 @@ function parentComponent() {
 
     // it supports the same API as 'attachTo'
     this.attachChild(AnotherChildComponent, '.another-child', {
-      teardownOn: 'someEvent'
+      someProperty: true,
+      // You can manually specify a teardown event
+      teardownOn: 'someTeardownEvent'
     });
-  });
 
+
+    setTimeout(() => {
+      this.trigger('someTeardownEvent');
+    }, 1000);
+  });
 }
+```
+
+As in the above example, you can specify a custom teardown event:
+
+```js
+this.attachChild(AnotherChildComponent, '.another-child', {
+  teardownOn: 'someTeardownEvent'
+});
+```
+
+This allows you to *manually* cause the teardown of that child.
+
+Importantly, this **overrides** the parent-child teardown behaviour. If you want to keep it, you must additionally supply the `childTeardownEvent`:
+
+```js
+this.attachChild(AnotherChildComponent, '.another-child', {
+  teardownOn: `someTeardownEvent ${this.childTeardownEvent}`
+});
+```
+
+### Non-Flight code
+
+`withChildComponents` provides a utility to help you coordinate Flight-component teardown from non-Flight code.
+
+First, import the `attach` method:
+
+```js
+const { attach } = require('flight-with-child-components');
+```
+
+You can use `attach` to attach Flight components like you would with `attachTo`, but you *also* can grab the resulting teardown event from the returned object:
+
+```js
+const { teardownEvent } = attach(Component, '.some-node', { ... });
+```
+
+You can then manually tear the component down using a jQuery event.
+
+```js
+$(document).trigger(teardownEvent);
 ```
 
 ## Development
