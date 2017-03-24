@@ -6,6 +6,33 @@
 
 var teardownEventCount = 0;
 
+/**
+ * attacher takes a function that generates an
+ */
+function attacher(eventNameGenerator) {
+    if (typeof eventNameGenerator !== 'function') {
+        eventNameGenerator = withChildComponents.nextTeardownEvent;
+    }
+
+    return function attach(Component, destination, attrs = {}) {
+        if (!attrs.teardownOn) {
+            attrs.teardownOn = eventNameGenerator.call(this);
+        }
+        var mixins = Component.prototype.mixedIn || [];
+        var isMixedIn = (mixins.indexOf(withBoundLifecycle) > -1);
+        var ComponentWithMixin = (
+            isMixedIn
+                ? Component
+                : Component.mixin(withBoundLifecycle)
+        );
+        ComponentWithMixin.attachTo(destination, attrs);
+
+        return {
+            teardownEvent: attrs.teardownOn
+        };
+    };
+}
+
 function withBoundLifecycle() {
     // Use deprecated defaultAttrs() only if necessary
     var defineDefaultAttributes = (this.attrDef ? this.attributes : this.defaultAttrs);
@@ -51,20 +78,9 @@ function withChildComponents() {
      * Takes Component (with attachTo method) plus destination and attrs arguments, which should
      * be the same as in a normal attachTo call.
      */
-    this.attachChild = function (Component, destination, attrs) {
-        attrs = attrs || {};
-        if (!attrs.teardownOn) {
-            attrs.teardownOn = this.childTeardownEvent;
-        }
-        var mixins = Component.prototype.mixedIn || [];
-        var isMixedIn = (mixins.indexOf(withBoundLifecycle) > -1);
-        var ComponentWithMixin = (
-            isMixedIn
-                ? Component
-                : Component.mixin(withBoundLifecycle)
-        );
-        ComponentWithMixin.attachTo(destination, attrs);
-    };
+    this.attachChild = attacher(function () {
+        return this.childTeardownEvent;
+    });
 }
 
 withChildComponents.nextTeardownEvent = function () {
@@ -73,5 +89,22 @@ withChildComponents.nextTeardownEvent = function () {
 };
 
 withChildComponents.withBoundLifecycle = withBoundLifecycle;
+
+/**
+ * `attach` helps non-Flight code attach components and tear them down.
+ *
+ * Example usage:
+ *
+ *      const { teardownEvent } = attach(Component, $someNode, { ... });
+ *
+ *      ... sometime later ...
+ *
+ *      $(document).trigger(teardownEvent);
+ */
+withChildComponents.attach = attacher(function () {
+    // This is called in this function, rather than passed directly, so that the
+    // generator can be tested
+    return withChildComponents.nextTeardownEvent();
+});
 
 module.exports = withChildComponents;

@@ -113,6 +113,12 @@ describe('withChildComponents', function () {
                 teardownOn: component.childTeardownEvent
             });
         });
+        it('should return an object with the child teardown event', function () {
+            var component = new Component();
+            component.initialize(window.outerDiv);
+            const result = component.attachChild(FakeComponent, '.my-selector', { test: true });
+            expect(result.teardownEvent).toEqual(component.childTeardownEvent);
+        });
         it('should mix withBoundLifecycle into child', function () {
             var component = new Component();
             component.initialize(window.outerDiv);
@@ -142,6 +148,49 @@ describe('withChildComponents', function () {
                 test: true,
                 teardownOn: 'someTeardownEvent'
             });
+        });
+    });
+
+    describe('attach', function () {
+        let _nextTeardownEvent;
+        beforeEach(function () {
+            _nextTeardownEvent = withChildComponents.nextTeardownEvent;
+            withChildComponents.nextTeardownEvent = () => 'nextTeardownEvent';
+        });
+        afterEach(function () {
+            withChildComponents.nextTeardownEvent = _nextTeardownEvent;
+        });
+        it('should allow attaching without a parent', function () {
+            withChildComponents.attach(FakeComponent, '.my-selector', {
+                test: true
+            });
+            expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
+                test: true,
+                teardownOn: 'nextTeardownEvent'
+            });
+        });
+        it('should allow attaching without a parent with a custom teardown event', function () {
+            withChildComponents.attach(FakeComponent, '.my-selector', {
+                test: true,
+                teardownOn: 'someTeardownEvent'
+            });
+            expect(FakeComponent.attachTo).toHaveBeenCalledWith('.my-selector', {
+                test: true,
+                teardownOn: 'someTeardownEvent'
+            });
+        });
+        it('should return an object with the supplied teardown event', function () {
+            const result = withChildComponents.attach(FakeComponent, '.my-selector', {
+                test: true,
+                teardownOn: 'someTeardownEvent'
+            });
+            expect(result.teardownEvent).toEqual('someTeardownEvent');
+        });
+        it('should return an object with the generated teardown event', function () {
+            const result = withChildComponents.attach(FakeComponent, '.my-selector', {
+                test: true
+            });
+            expect(result.teardownEvent).toEqual('nextTeardownEvent');
         });
     });
 });
