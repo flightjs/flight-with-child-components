@@ -95,7 +95,7 @@ const { attach } = require('flight-with-child-components');
 You can use `attach` to attach Flight components like you would with `attachTo`, but you *also* can grab the resulting teardown event from the returned object:
 
 ```js
-const { teardownEvent } = attach(Component, '.some-node', { ... });
+const { teardownEvent } = attach(Component, '.some-node');
 ```
 
 You can then manually tear the component down using a jQuery event.

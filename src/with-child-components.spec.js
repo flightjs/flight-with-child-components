@@ -116,7 +116,7 @@ describe('withChildComponents', function () {
         it('should return an object with the child teardown event', function () {
             var component = new Component();
             component.initialize(window.outerDiv);
-            const result = component.attachChild(FakeComponent, '.my-selector', { test: true });
+            var result = component.attachChild(FakeComponent, '.my-selector', { test: true });
             expect(result.teardownEvent).toEqual(component.childTeardownEvent);
         });
         it('should mix withBoundLifecycle into child', function () {
@@ -180,14 +180,14 @@ describe('withChildComponents', function () {
             });
         });
         it('should return an object with the supplied teardown event', function () {
-            const result = withChildComponents.attach(FakeComponent, '.my-selector', {
+            var result = withChildComponents.attach(FakeComponent, '.my-selector', {
                 test: true,
                 teardownOn: 'someTeardownEvent'
             });
             expect(result.teardownEvent).toEqual('someTeardownEvent');
         });
         it('should return an object with the generated teardown event', function () {
-            const result = withChildComponents.attach(FakeComponent, '.my-selector', {
+            var result = withChildComponents.attach(FakeComponent, '.my-selector', {
                 test: true
             });
             expect(result.teardownEvent).toEqual('nextTeardownEvent');

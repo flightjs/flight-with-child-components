@@ -7,7 +7,8 @@
 var teardownEventCount = 0;
 
 /**
- * attacher takes a function that generates an
+ * attacher takes a function that generates event-name strings. The supplied function is
+ * called every time a child component is attached.
  */
 function attacher(eventNameGenerator) {
     if (typeof eventNameGenerator !== 'function') {
