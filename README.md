@@ -114,6 +114,22 @@ const { teardownEvent } = attach(Component, '.some-node', {
 
 In this example, `teardownEvent` will be `someTeardownEvent`.
 
+## Teardown hooks
+
+To perform cleanup tasks around child teardown events, there are two methods you can "hook" with advice: `willTeardownChild` and `didTeardownChild`.
+
+```js
+this.before('willTeardownChild', function () {
+  // The childTeardownEvent has not yet fired, so you can do any extra cleanup you need
+  // before your child components disappear
+});
+
+this.before('didTeardownChild', function () {
+  // The childTeardownEvent has now fired and the child components will have run teardown.
+  // This is the time to do final cleanup.
+});
+```
+
 ## Development
 
 To develop this module, clone the repository and run:
