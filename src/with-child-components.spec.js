@@ -68,6 +68,26 @@ describe('withChildComponents', function () {
         expect(window.childDidTeardown).toBe(true);
     });
 
+    it('should call teardown hooks', function () {
+        var willTeardownChildSpy = jasmine.createSpy('willTeardownChildSpy');
+        var didTeardownChildSpy = jasmine.createSpy('didTeardownChildSpy');
+        var Parent = Component.mixin(function () {
+            this.after('initialize', function () {
+                this.after('willTeardownChild', function () {
+                    willTeardownChildSpy();
+                });
+                this.after('didTeardownChild', function () {
+                    didTeardownChildSpy();
+                });
+            });
+        });
+        var parent = new Parent();
+        parent.initialize(window.outerDiv);
+        parent.teardown();
+        expect(willTeardownChildSpy).toHaveBeenCalled();
+        expect(didTeardownChildSpy).toHaveBeenCalled();
+    });
+
     it('should teardown the child when torn down if component uses new attributes', function () {
         var parent = new Component();
         parent.initialize(window.outerDiv);

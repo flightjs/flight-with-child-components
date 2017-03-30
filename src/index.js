@@ -70,8 +70,16 @@ function withChildComponents() {
      * Before this component's teardown, tell all the children to teardown
      */
     this.before('teardown', function () {
+        this.willTeardownChild();
         this.trigger(this.childTeardownEvent);
+        this.didTeardownChild();
     });
+
+    /**
+     * These are here as hooks for advice around teardown.
+     */
+    this.willTeardownChild = function () {};
+    this.didTeardownChild = function () {};
 
     /**
      * Utility method for attaching a component with teardownOn.
