@@ -119,7 +119,7 @@ In this example, `teardownEvent` will be `someTeardownEvent`.
 To develop this module, clone the repository and run:
 
 ```
-$ npm install && npm test
+$ yarn && yarn test
 ```
 
 If the tests pass, you have a working environment. You shouldn't need any external dependencies.

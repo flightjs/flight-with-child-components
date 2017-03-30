@@ -11,4 +11,3 @@
 
 const specsContext = require.context('.', true, /.+\.spec\.js$/);
 specsContext.keys().forEach(specsContext);
-module.exports = specsContext;

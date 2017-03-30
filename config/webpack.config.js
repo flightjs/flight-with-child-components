@@ -1,11 +1,7 @@
 var webpack = require('webpack');
 
-var DedupePlugin = webpack.optimize.DedupePlugin;
-var OccurenceOrderPlugin = webpack.optimize.OccurenceOrderPlugin;
-
 var plugins = [
-    new DedupePlugin(),
-    new OccurenceOrderPlugin()
+    new webpack.optimize.OccurrenceOrderPlugin()
 ];
 
 module.exports = {
@@ -15,7 +11,21 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader'
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            ['env', {
+                                targets: {
+                                    browsers: [
+                                        '> 1%',
+                                        'last 2 versions'
+                                    ]
+                                }
+                            }]
+                        ]
+                    }
+                }
             }
         ]
     },
