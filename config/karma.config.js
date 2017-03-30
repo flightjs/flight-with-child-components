@@ -2,8 +2,6 @@
 
 var constants = require('./constants');
 var webpackConfig = require('./webpack.config.test');
-// entry is determined by karma config 'files' array
-webpackConfig.entry = {};
 
 module.exports = function (config) {
     config.set({
@@ -34,15 +32,6 @@ module.exports = function (config) {
         },
         reporters: [ 'dots' ],
         singleRun: true,
-        webpack: webpackConfig,
-        webpackMiddleware: {
-            stats: {
-                assetsSort: 'name',
-                colors: true,
-                children: false,
-                chunks: false,
-                modules: false
-            }
-        }
+        webpack: webpackConfig
     });
 };
